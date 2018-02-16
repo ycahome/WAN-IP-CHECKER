@@ -2,12 +2,17 @@ Installation instructions: - Make sure you have Python3 installed!
 sudo apt-get install python3
 sudo apt-get install python3-dev3
 
-- Create Plugin Folder "WAN-IP-CHECKER" under "domoticz/plugins" folder
-- Save this script as "plugin.py" on "WAN-IP-CHECKER" folder
-- Restart domoticz service.
-- Add a new entry of this Hardware on your domoticz installation (Setup/Hardware/select and add "Wan Ip Checker")
-- NOTE:When userid/pw checking is active, make sure to add 127.0.0.* to the Local Networks field on the Settings of your Domoticz. ( many thanks to manjh for his help)4 What am going to see?:
-- Plugin will auto-add one Text Counter on your "Utility" Section named "<Your Hardware Name>- WAN IP 1".5
+Run The following Commands:
+cd plugins
+mkdir WAN-IP-CHECKER
+sudo apt-get update
+sudo apt-get install git
+git clone https://github.com/ycahome/WAN-IP-CHECKER.git WAN-IP-CHECKER
+cd WAN-IP-CHECKER
+sudo chmod +x plugin.py
+sudo /etc/init.d/domoticz.sh restart
+
+
 
 F.A.Q
 1. if I enable notification, will it send an e-mail? To which mail address?

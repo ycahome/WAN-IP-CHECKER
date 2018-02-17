@@ -8,11 +8,12 @@
 #                            : Added notification check on Debug mode every 5 minutes
 #                            : Bug Fixes
 #          1.2.3             : "localhost" to "127.0.0.1"
+#          1.2.4             : Made Notification subject equal to Sensor Name
 #
 #
 #
 """
-<plugin key="WAN-IP-CHECKER" name="Wan IP Checker" author="ycahome" version="1.2.3" externallink="https://www.domoticz.com/forum/viewtopic.php?t=16266">
+<plugin key="WAN-IP-CHECKER" name="Wan IP Checker" author="ycahome" version="1.2.4" externallink="https://www.domoticz.com/forum/viewtopic.php?t=16266">
     <params>
         <param field="Address" label="Check My IP URL" width="200px" required="true" default="https://4.ifcfg.me/ip"/>
         <param field="Mode1" label="Check Interval(seconds)" width="75px" required="true" default="60"/>
@@ -37,6 +38,7 @@ import hmac
 import hashlib
 import time
 import urllib
+import urllib2
 import urllib.request
 import urllib.error
 
@@ -137,7 +139,7 @@ class BasePlugin:
                 ServerURL = "http://127.0.0.1:8080/json.htm?param=sendnotification&type=command"
                 Domoticz.Debug("ConstructedURL ServerURL is:" + ServerURL)
 
-                MailDetailsURL = "&subject=WAN-IP-Changed&body=" + WANip
+                MailDetailsURL = "&subject=" + urllib2.parse.quote(Devices[1].Name) + "&body=" + urllib2.parse.quote("New IP:") + WANip
 
 
                 notificationURL = ServerURL + MailDetailsURL

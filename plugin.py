@@ -38,7 +38,7 @@ import hmac
 import hashlib
 import time
 import urllib
-import urllib2
+#import urllib2
 import urllib.request
 import urllib.error
 
@@ -139,7 +139,7 @@ class BasePlugin:
                 ServerURL = "http://127.0.0.1:8080/json.htm?param=sendnotification&type=command"
                 Domoticz.Debug("ConstructedURL ServerURL is:" + ServerURL)
 
-                MailDetailsURL = "&subject=" + urllib2.parse.quote(Devices[1].Name) + "&body=" + urllib2.parse.quote("New IP:") + WANip
+                MailDetailsURL = "&subject=" + urllib.parse.quote(Devices[1].Name) + "&body=" + urllib.parse.quote("New IP:") + WANip
 
 
                 notificationURL = ServerURL + MailDetailsURL

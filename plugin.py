@@ -16,7 +16,6 @@
 <plugin key="WAN-IP-CHECKER" name="Wan IP Checker" author="ycahome" version="1.2.4" externallink="https://www.domoticz.com/forum/viewtopic.php?t=16266">
     <description>
 		<h2>Wan IP Checker v.1.2.4</h2><br/>
-		</ul>
     </description>
     <params>
         <param field="Address" label="Check My IP URL" width="200px" required="true" default="https://4.ifcfg.me/ip"/>

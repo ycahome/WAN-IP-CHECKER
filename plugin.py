@@ -9,7 +9,7 @@
 #                            : Bug Fixes
 #          1.2.3             : "localhost" to "127.0.0.1"
 #          1.2.4             : Limit notifications to email
-#          1.2.5             : Changed device from Text to Alert
+#          1.2.5             : 
 #
 #
 #

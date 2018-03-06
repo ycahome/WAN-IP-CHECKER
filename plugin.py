@@ -100,10 +100,9 @@ class BasePlugin:
 
         Domoticz.Debug("onHeartbeat called")
 
-        #if Devices[1].nValue == 2:
-        #    Domoticz.Log("Reverting WAN IP Change status to normal.")
-        #    tempSVALUE = Devices[1].sValue
-        #    Devices[1].Update(nValue=1,sValue=Devices[1].sValue)
+        if Devices[1].nValue == 2:
+            Domoticz.Log("Reverting WAN IP Change status to normal.")
+            Devices[1].Update(nValue=1,sValue=Devices[1].sValue)
 
         url = Parameters["Address"]
 
@@ -159,7 +158,6 @@ class BasePlugin:
                   Domoticz.Error("HTTP Request error: " + str(err1) + " URL: " + notificationURL)
                 return
                 Domoticz.Debug("Notification URL is :" + str(notificationURL))
-              Devices[1].Update(1,WANip)
             else:
               Domoticz.Log("WAN IP the same. Skipping")
 

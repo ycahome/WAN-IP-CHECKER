@@ -103,7 +103,8 @@ class BasePlugin:
 
         if Devices[1].nValue == 2:
             Domoticz.Log("Reverting WAN IP Change status to normal.")
-            Devices[1].Update(nValue=1,Devices[1].sValue)
+            tempSVALUE = Devices[1].sValue
+            Devices[1].Update(nValue=1,sValue=Devices[1].sValue)
 
         url = Parameters["Address"]
 

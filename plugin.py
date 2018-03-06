@@ -9,13 +9,14 @@
 #                            : Bug Fixes
 #          1.2.3             : "localhost" to "127.0.0.1"
 #          1.2.4             : Limit notifications to email
+#          1.2.5             : Changed device from Text to Alert
 #
 #
 #
 """
-<plugin key="WAN-IP-CHECKER" name="Wan IP Checker" author="ycahome" version="1.2.4" externallink="https://www.domoticz.com/forum/viewtopic.php?t=16266">
+<plugin key="WAN-IP-CHECKER" name="Wan IP Checker" author="ycahome" version="1.2.5" externallink="https://www.domoticz.com/forum/viewtopic.php?t=16266">
     <description>
-		<h2>Wan IP Checker v.1.2.4</h2><br/>
+		<h2>Wan IP Checker v.1.2.5</h2><br/>
     </description>
     <params>
         <param field="Address" label="Check My IP URL" width="200px" required="true" default="https://4.ifcfg.me/ip"/>
@@ -84,8 +85,10 @@ class BasePlugin:
 
         # create the mandatory child device if it does not yet exist
         if 1 not in Devices:
-            Domoticz.Device(Name="WAN IP 1", Unit=1, TypeName="Text").Create()
+            Domoticz.Device(Name="WAN IP Alert", Unit=1, TypeName="Alert", Used=1).Create()
+             #Domoticz.Device(Name="WAN IP 1", Unit=1, TypeName="Text", Used=1).Create()
             Domoticz.Log("Device created.")
+
         DumpConfigToLog()
         Domoticz.Heartbeat(int(Parameters["Mode1"]))
 

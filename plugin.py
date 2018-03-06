@@ -101,7 +101,7 @@ class BasePlugin:
 
         Domoticz.Debug("onHeartbeat called")
 
-        if Devices[1].sValue == 2:
+        if Devices[1].nValue == 2:
             Domoticz.Log("Reverting WAN IP Change status to normal.")
             Devices[1].Update(nValue=1)
 

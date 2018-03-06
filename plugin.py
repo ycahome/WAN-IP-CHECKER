@@ -89,7 +89,6 @@ class BasePlugin:
              #Domoticz.Device(Name="WAN IP 1", Unit=1, TypeName="Text", Used=1).Create()
             Domoticz.Log("Device created.")
 
-        DumpConfigToLog()
         Domoticz.Heartbeat(int(Parameters["Mode1"]))
 
 

@@ -101,10 +101,10 @@ class BasePlugin:
 
         Domoticz.Debug("onHeartbeat called")
 
-        if Devices[1].nValue == 2:
-            Domoticz.Log("Reverting WAN IP Change status to normal.")
-            tempSVALUE = Devices[1].sValue
-            Devices[1].Update(nValue=1,sValue=Devices[1].sValue)
+        #if Devices[1].nValue == 2:
+        #    Domoticz.Log("Reverting WAN IP Change status to normal.")
+        #    tempSVALUE = Devices[1].sValue
+        #    Devices[1].Update(nValue=1,sValue=Devices[1].sValue)
 
         url = Parameters["Address"]
 
@@ -140,7 +140,8 @@ class BasePlugin:
 
             if  CurWANip != WANip:
               Domoticz.Log("WAN IP Updated to:" + WANip)
-              Devices[1].Update(2,WANip)
+              #Devices[1].Update(2,WANip)
+              Devices[1].Update(1,WANip)
               if Parameters["Mode3"] == 'Notify':
                 Domoticz.Log("Running WAN IP Notifications")
                 Domoticz.Debug("WAN IP retrieved:" + WANip)

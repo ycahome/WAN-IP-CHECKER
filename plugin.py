@@ -102,7 +102,7 @@ class BasePlugin:
         Domoticz.Debug("onHeartbeat called")
 
         if Devices[1].sValue == 1:
-            Devices[1].Update(nValue=1)
+            Devices[1].Update(nValue=0)
 
         url = Parameters["Address"]
 

@@ -140,7 +140,7 @@ class BasePlugin:
             if  CurWANip != WANip:
               Domoticz.Log("WAN IP Updated to:" + WANip)
               #Devices[1].Update(2,WANip)
-              Devices[1].Update(1,WANip)
+              Devices[1].Update(2,WANip)
               if Parameters["Mode3"] == 'Notify':
                 Domoticz.Log("Running WAN IP Notifications")
                 Domoticz.Debug("WAN IP retrieved:" + WANip)
@@ -159,7 +159,7 @@ class BasePlugin:
                   Domoticz.Error("HTTP Request error: " + str(err1) + " URL: " + notificationURL)
                 return
                 Domoticz.Debug("Notification URL is :" + str(notificationURL))
-
+              Devices[1].Update(1,WANip)
             else:
               Domoticz.Log("WAN IP the same. Skipping")
 

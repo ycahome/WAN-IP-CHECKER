@@ -19,7 +19,7 @@
 		<h2>Wan IP Checker v.1.2.5</h2><br/>
     </description>
     <params>
-        <param field="Address" label="Check My IP URL" width="200px" required="true" default="https://4.ifcfg.me/ip"/>
+        <param field="Address" label="Check My IP URL" width="200px" required="true" default="https://ifconfig.me/ip"/>
         <param field="Mode1" label="Check Interval(seconds)" width="75px" required="true" default="60"/>
         <param field="Mode3" label="Notifications" width="75px">
             <options>

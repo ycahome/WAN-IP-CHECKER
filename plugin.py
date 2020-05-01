@@ -56,6 +56,9 @@ class BasePlugin:
     privateKey = b""
     socketOn = "FALSE"
 
+    heartbeatsInterval = 10
+    heartbeatsCount = 0
+
     def __init__(self):
         self.debug = False
         self.error = False
@@ -89,7 +92,7 @@ class BasePlugin:
              #Domoticz.Device(Name="WAN IP 1", Unit=1, TypeName="Text", Used=1).Create()
             Domoticz.Log("Device created.")
 
-        Domoticz.Heartbeat(int(Parameters["Mode1"]))
+        Domoticz.Heartbeat(self.heartbeatsInterval)
 
 
     def onStop(self):
@@ -97,9 +100,13 @@ class BasePlugin:
         Domoticz.Debugging(0)
 
     def onHeartbeat(self):
-
         Domoticz.Debug("onHeartbeat called")
+        self.heartbeatsCount = self.heartbeatsCount + 1
+        if self.pollinterval <= self.heartbeatsInterval * self.heartbeatsCount:
+            self.heartbeatsCount = 0
+            self.checkIP()
 
+    def checkIP(self):
         if Devices[1].nValue == 2:
             Domoticz.Log("Reverting WAN IP Change status to normal.")
             Devices[1].Update(nValue=1,sValue=Devices[1].sValue)

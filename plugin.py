@@ -10,7 +10,7 @@
 #          1.2.3             : "localhost" to "127.0.0.1"
 #          1.2.4             : Limit notifications to email
 #          1.2.5             : 
-#          1.2.6             : 
+#          1.2.6             : Fix (by gilmrt) for "Error: IP WAN hardware (XX) thread seems to have ended unexpectedly"
 #
 #
 #

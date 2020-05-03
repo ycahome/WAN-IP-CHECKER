@@ -10,16 +10,17 @@
 #          1.2.3             : "localhost" to "127.0.0.1"
 #          1.2.4             : Limit notifications to email
 #          1.2.5             : 
+#          1.2.6             : Fix (by gilmrt) for "Error: IP WAN hardware (XX) thread seems to have ended unexpectedly"
 #
 #
 #
 """
-<plugin key="WAN-IP-CHECKER" name="Wan IP Checker" author="ycahome" version="1.2.5" externallink="https://www.domoticz.com/forum/viewtopic.php?t=16266">
+<plugin key="WAN-IP-CHECKER" name="Wan IP Checker" author="ycahome" version="1.2.6" externallink="https://www.domoticz.com/forum/viewtopic.php?t=16266">
     <description>
-		<h2>Wan IP Checker v.1.2.5</h2><br/>
+		<h2>Wan IP Checker v.1.2.6</h2><br/>
     </description>
     <params>
-        <param field="Address" label="Check My IP URL" width="200px" required="true" default="https://4.ifcfg.me/ip"/>
+        <param field="Address" label="Check My IP URL" width="200px" required="true" default="https://ifconfig.me/ip"/>
         <param field="Mode1" label="Check Interval(seconds)" width="75px" required="true" default="60"/>
         <param field="Mode3" label="Notifications" width="75px">
             <options>
@@ -56,6 +57,9 @@ class BasePlugin:
     privateKey = b""
     socketOn = "FALSE"
 
+    heartbeatsInterval = 10
+    heartbeatsCount = 0
+
     def __init__(self):
         self.debug = False
         self.error = False
@@ -89,7 +93,7 @@ class BasePlugin:
              #Domoticz.Device(Name="WAN IP 1", Unit=1, TypeName="Text", Used=1).Create()
             Domoticz.Log("Device created.")
 
-        Domoticz.Heartbeat(int(Parameters["Mode1"]))
+        Domoticz.Heartbeat(self.heartbeatsInterval)
 
 
     def onStop(self):
@@ -97,9 +101,13 @@ class BasePlugin:
         Domoticz.Debugging(0)
 
     def onHeartbeat(self):
-
         Domoticz.Debug("onHeartbeat called")
+        self.heartbeatsCount = self.heartbeatsCount + 1
+        if self.pollinterval <= self.heartbeatsInterval * self.heartbeatsCount:
+            self.heartbeatsCount = 0
+            self.checkIP()
 
+    def checkIP(self):
         if Devices[1].nValue == 2:
             Domoticz.Log("Reverting WAN IP Change status to normal.")
             Devices[1].Update(nValue=1,sValue=Devices[1].sValue)

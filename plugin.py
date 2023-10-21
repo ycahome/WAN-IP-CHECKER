@@ -9,18 +9,19 @@
 #                            : Bug Fixes
 #          1.2.3             : "localhost" to "127.0.0.1"
 #          1.2.4             : Limit notifications to email
-#          1.2.5             : 
+#          1.2.5             :
 #          1.2.6             : Fix (by gilmrt) for "Error: IP WAN hardware (XX) thread seems to have ended unexpectedly"
-#
-#
+#          1.2.7             : Update by Xenomes "Updated the code to check if the website returns an IPv6 result"
 #
 """
-<plugin key="WAN-IP-CHECKER" name="Wan IP Checker" author="ycahome" version="1.2.6" externallink="https://www.domoticz.com/forum/viewtopic.php?t=16266">
+<plugin key="WAN-IP-CHECKER" name="Wan IP Checker" author="ycahome" version="1.2.7" externallink="https://www.domoticz.com/forum/viewtopic.php?t=16266">
     <description>
-		<h2>Wan IP Checker v.1.2.6</h2><br/>
+		<h2>Wan IP Checker v.1.2.7</h2><br/>
     </description>
     <params>
-        <param field="Address" label="Check My IP URL" width="200px" required="true" default="https://ifconfig.me/ip"/>
+        <param field="Mode2" label="IP Address" width="200px" required="true" default="127.0.0.1"/>
+        <param field="Port" label="Port" width="30px" required="true" default="8080"/>
+        <param field="Address" label="Check My IP URL" width="200px" required="true" default="https://api.ipify.org"/>
         <param field="Mode1" label="Check Interval(seconds)" width="75px" required="true" default="60"/>
         <param field="Mode3" label="Notifications" width="75px">
             <options>
@@ -39,16 +40,12 @@
 """
 
 import Domoticz
-import hmac
-import hashlib
-import time
 import urllib
 import urllib.request
 import urllib.error
+import sys
 
-#from urllib2 import urlopen
-from datetime import datetime, timedelta
-
+from datetime import datetime
 
 class BasePlugin:
     enabled = False
@@ -90,7 +87,7 @@ class BasePlugin:
         # create the mandatory child device if it does not yet exist
         if 1 not in Devices:
             Domoticz.Device(Name="WAN IP Alert", Unit=1, TypeName="Alert", Used=1).Create()
-             #Domoticz.Device(Name="WAN IP 1", Unit=1, TypeName="Text", Used=1).Create()
+            #Domoticz.Device(Name="WAN IP 1", Unit=1, TypeName="Text", Used=1).Create()
             Domoticz.Log("Device created.")
 
         Domoticz.Heartbeat(self.heartbeatsInterval)
@@ -115,67 +112,65 @@ class BasePlugin:
         url = Parameters["Address"]
 
         if mid(url,0,7)!= "http://" and mid(url,0,8)!= "https://"  :
-         Domoticz.Error("Check my IP URL Prefix is wrong: 'http://' or 'https://' required.")
-         return
+            Domoticz.Error("Check my IP URL Prefix is wrong: 'http://' or 'https://' required.")
+            return
 
         try:
-          response = urllib.request.urlopen(url, timeout = 30).read()
+            response = urllib.request.urlopen(url, timeout = 30).read()
         except urllib.error.URLError as err0:
-          Domoticz.Error("URL Request error: " + str(err0) + " URL: " + url)
-          response =  ""
+            Domoticz.Error("URL Request error: " + str(err0) + " URL: " + url)
+            response =  ""
         except urllib.error.HTTPError as err01:
-          Domoticz.Error("HTTP Request error: " + str(err01) + " URL: " + url)
-          response =  ""
+            Domoticz.Error("HTTP Request error: " + str(err01) + " URL: " + url)
+            response =  ""
         else:
-          WANip = str(response,'utf-8')
-          WANip = WANip.strip(' \t\n\r')
+            WANip = str(response,'utf-8')
+            WANip = WANip.strip(' \t\n\r')
 
-          if WANip != "" and len(WANip)<16:
-            Domoticz.Debug("IP Discovery Site's response len is:"+ str(len(WANip)))
-            Domoticz.Debug("WAN IP retrieved:" + WANip)
-            CurWANip = Devices[1].sValue
-            CurWANip = CurWANip.strip(' \t\n\r')
-            Domoticz.Debug("Previous WAN IP:" + CurWANip)
-
-            CurMin = str(datetime.now().minute)
-            if len(CurMin) == 1: CurMin = "0" + CurMin
-
-            if Parameters["Mode6"] == 'Debug' and (mid(CurMin,1,1) == "3" or  mid(CurMin,1,1) == "5" or  mid(CurMin,1,1) == "0"):
-              Domoticz.Error("Debug is on. Trigering IP Change:")
-              CurWANip = "0.0.0.0"
-
-            if  CurWANip != WANip:
-              Domoticz.Log("WAN IP Updated to:" + WANip)
-              #Devices[1].Update(2,WANip)
-              Devices[1].Update(2,WANip)
-              if Parameters["Mode3"] == 'Notify':
-                Domoticz.Log("Running WAN IP Notifications")
+            if WANip != "" and len(WANip)<16:
+                Domoticz.Debug("IP Discovery Site's response len is:"+ str(len(WANip)))
                 Domoticz.Debug("WAN IP retrieved:" + WANip)
+                CurWANip = Devices[1].sValue
+                CurWANip = CurWANip.strip(' \t\n\r')
+                Domoticz.Debug("Previous WAN IP:" + CurWANip)
 
-                ServerURL = "http://127.0.0.1:8080/json.htm?param=sendnotification&type=command"
-                Domoticz.Debug("ConstructedURL ServerURL is:" + ServerURL)
+                CurMin = str(datetime.now().minute)
+                if len(CurMin) == 1: CurMin = "0" + CurMin
 
-                MailDetailsURL = "&subject=WAN-IP-Changed&body=" + WANip + "&subsystem=email"
+                if Parameters["Mode6"] == 'Debug' and (mid(CurMin,1,1) == "3" or  mid(CurMin,1,1) == "5" or  mid(CurMin,1,1) == "0"):
+                    Domoticz.Error("Debug is on. Trigering IP Change:")
+                    CurWANip = "0.0.0.0"
 
+                if  CurWANip != WANip:
+                    Domoticz.Log("WAN IP Updated to:" + WANip)
+                    #Devices[1].Update(2,WANip)
+                    Devices[1].Update(2,WANip)
 
-                notificationURL = ServerURL + MailDetailsURL
-                Domoticz.Debug("ConstructedURL is:" + notificationURL)
-                try:
-                  response = urllib.request.urlopen(notificationURL, timeout = 30).read()
-                except urllib.error.HTTPError as err1:
-                  Domoticz.Error("HTTP Request error: " + str(err1) + " URL: " + notificationURL)
-                return
-                Domoticz.Debug("Notification URL is :" + str(notificationURL))
+                    if Parameters["Mode3"] == 'Notify':
+                        Domoticz.Log("Running WAN IP Notifications")
+                        Domoticz.Debug("WAN IP retrieved:" + WANip)
+                        domoticz = Parameters["Mode2"]
+                        port = Parameters["Port"]
+                        ServerURL = "http://" + domoticz + ":" + port + "/json.htm?type=command&param=sendnotification"
+                        Domoticz.Debug("ConstructedURL ServerURL is:" + ServerURL)
+                        MailDetailsURL = "&subject=WAN-IP-Changed&body=" + WANip + "&subsystem=email"
+                        notificationURL = ServerURL + MailDetailsURL
+                        Domoticz.Debug("ConstructedURL is:" + notificationURL)
+                        try:
+                            response = urllib.request.urlopen(notificationURL, timeout = 30).read()
+                        except urllib.error.HTTPError as err1:
+                            Domoticz.Error("HTTP Request error: " + str(err1) + " URL: " + notificationURL)
+                        return
+                        Domoticz.Debug("Notification URL is :" + str(notificationURL))
+
+                else:
+                    Domoticz.Log("WAN IP the same. Skipping")
+                    #Devices[1].Update(1,WANip, Images["wanipaddress"].ID)
+
+            elif WANip != "" and len(WANip)<40 and ':' in WANip :
+                Domoticz.Error("IP discovery site's response with an IPv6 result, change to example: https://api.ipify.org.")
             else:
-              Domoticz.Log("WAN IP the same. Skipping")
-
-            #Devices[1].Update(1,WANip, Images["wanipaddress"].ID)
-          else:
-            Domoticz.Error("IP Discovery Site's response not valid")
-
-
-
-
+                Domoticz.Error("IP Discovery Site's response not valid")
 
 global _plugin
 _plugin = BasePlugin()
@@ -192,7 +187,6 @@ def onHeartbeat():
     global _plugin
     _plugin.onHeartbeat()
 
-
 # Generic helper functions
 def DumpConfigToLog():
     for x in Parameters:
@@ -207,21 +201,15 @@ def DumpConfigToLog():
         Domoticz.Debug("Device sValue:   '" + Devices[x].sValue + "'")
     return
 
-
 #
 # Parse an int and return None if no int is given
 #
 
 def parseIntValue(s):
-
-        try:
-            return int(s)
-        except:
-            return None
-
+    try:
+        return int(s)
+    except:
+        return None
 
 def mid(s, offset, amount):
     return s[offset:offset+amount]
-
-
-

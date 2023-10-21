@@ -22,7 +22,7 @@
         <param field="Mode2" label="IP Address" width="200px" required="true" default="127.0.0.1"/>
         <param field="Port" label="Port" width="30px" required="true" default="8080"/>
         <param field="Address" label="Check My IP URL" width="200px" required="true" default="https://api.ipify.org"/>
-        <param field="Mode1" label="Check Interval(seconds)" width="75px" required="true" default="60"/>
+        <param field="Mode1" label="Check Interval(seconds)" width="75px" required="true" default="3600"/>
         <param field="Mode3" label="Notifications" width="75px">
             <options>
                 <option label="Notify" value="Notify"/>
